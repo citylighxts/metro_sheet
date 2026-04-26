@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/auth_service.dart';
+import '../../viewmodels/auth_viewmodel.dart';
 import '../home/home_view.dart';
 import 'login_view.dart';
 import 'register_view.dart';
@@ -20,7 +21,12 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
   Widget build(BuildContext context) =>
       ref.watch(authStateProvider).when(
         data: (user) {
-          if (user != null) return const HomeView();
+          if (user != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ref.read(ensureLocalUserProvider)(user.uid, user.email ?? '');
+            });
+            return const HomeView();
+          }
           return _showRegister
               ? RegisterView(onGoToLogin: () => setState(() => _showRegister = false))
               : LoginView(onGoToRegister: () => setState(() => _showRegister = true));
@@ -50,4 +56,3 @@ class _AuthWrapperState extends ConsumerState<AuthWrapper> {
         ),
       );
 }
-

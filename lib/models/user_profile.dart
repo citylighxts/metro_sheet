@@ -25,6 +25,15 @@ class UserProfile {
     };
   }
 
+  Map<String, dynamic> toSqlite() {
+    return {
+      'uid': uid,
+      'email': email,
+      'display_name': displayName,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
+
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return UserProfile(
@@ -33,6 +42,15 @@ class UserProfile {
       displayName: data['displayName'] as String?,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       lastLoginAt: (data['lastLoginAt'] as Timestamp?)?.toDate(),
+    );
+  }
+
+  factory UserProfile.fromSqliteMap(Map<String, dynamic> map) {
+    return UserProfile(
+      uid: map['uid'] as String,
+      email: map['email'] as String,
+      displayName: map['display_name'] as String?,
+      createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
 }

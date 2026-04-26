@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../widgets/auth_text_field.dart';
 import '../../widgets/auth_shared.dart';
 import '../../services/auth_service.dart';
+import '../../viewmodels/auth_viewmodel.dart';
 
 class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key, required this.onGoToRegister});
@@ -32,9 +33,13 @@ class _LoginViewState extends ConsumerState<LoginView> {
     if (!_formKey.currentState!.validate()) return;
     setState(() { _isLoading = true; _errorMessage = null; });
     try {
-      await ref.read(authServiceProvider).loginWithEmail(
+      final uid = await ref.read(authServiceProvider).loginWithEmail(
         email: _emailController.text.trim(),
         password: _passwordController.text,
+      );
+      await ref.read(ensureLocalUserProvider)(
+        uid,
+        _emailController.text.trim(),
       );
       if (mounted) setState(() { _isLoading = false; });
     } catch (e) {

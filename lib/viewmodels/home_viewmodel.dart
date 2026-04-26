@@ -9,8 +9,9 @@ export '../services/auth_service.dart'
 class HomeViewModel extends StateNotifier<AsyncValue<List<SheetMusic>>> {
   final DatabaseService _db;
   final String? _uid;
+  final String? _email;
 
-  HomeViewModel(this._db, this._uid) : super(const AsyncValue.loading());
+  HomeViewModel(this._db, this._uid, this._email) : super(const AsyncValue.loading());
 
   Future<void> loadAllSheetMusic() async {
     state = const AsyncValue.loading();
@@ -23,7 +24,7 @@ class HomeViewModel extends StateNotifier<AsyncValue<List<SheetMusic>>> {
 
   Future<int?> addSheetMusic(SheetMusic sheetMusic) async {
     try {
-      final id = await _db.addSheetMusic(sheetMusic, _uid);
+      final id = await _db.addSheetMusic(sheetMusic, _uid, _email);
       await loadAllSheetMusic();
       return id;
     } catch (err, stack) {
@@ -63,7 +64,8 @@ final homeViewModelProvider =
     StateNotifierProvider<HomeViewModel, AsyncValue<List<SheetMusic>>>((ref) {
   final db = ref.watch(databaseServiceProvider);
   final uid = ref.watch(currentUserUidProvider);
-  final notifier = HomeViewModel(db, uid);
+  final email = ref.watch(currentUserEmailProvider);
+  final notifier = HomeViewModel(db, uid, email);
   notifier.loadAllSheetMusic();
   return notifier;
 });
