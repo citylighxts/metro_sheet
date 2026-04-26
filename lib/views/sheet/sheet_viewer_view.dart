@@ -78,7 +78,7 @@ class _SheetViewerScreenState extends ConsumerState<SheetViewerScreen> {
         backgroundColor: const Color(0xFF111318),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          minSize: 0,
+          minimumSize: Size.zero,
           onPressed: _openEdit,
           child: const Icon(CupertinoIcons.pencil, color: CupertinoColors.white, size: 20),
         ),

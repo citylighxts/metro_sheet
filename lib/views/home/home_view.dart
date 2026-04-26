@@ -264,7 +264,7 @@ class _LibraryTab extends ConsumerWidget {
                 style: const TextStyle(fontSize: 13, color: CupertinoColors.secondaryLabel),
               ),
               loading: () => const SizedBox(height: 18, child: CupertinoActivityIndicator(radius: 8)),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
           ),
         ),
@@ -341,7 +341,7 @@ class _SheetMusicList extends ConsumerWidget {
             itemCount: sheets.length,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (_, __) => Divider(
+            separatorBuilder: (context, index) => Divider(
               height: 1,
               indent: 82,
               color: CupertinoColors.separator.resolveFrom(context),
@@ -519,8 +519,6 @@ class _TabItem extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
-    this.activeColor = _kAccent,
-    this.inactiveColor = const Color(0xFF8E8E93),
   });
 
   final IconData icon;
@@ -528,12 +526,13 @@ class _TabItem extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
-  final Color activeColor;
-  final Color inactiveColor;
+
+  static const Color _activeColor = _kAccent;
+  static const Color _inactiveColor = Color(0xFF8E8E93);
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? activeColor : inactiveColor;
+    final color = selected ? _activeColor : _inactiveColor;
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,

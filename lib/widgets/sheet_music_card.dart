@@ -35,7 +35,7 @@ class SheetMusicCard extends StatelessWidget {
       ),
       child: CupertinoButton(
         padding: EdgeInsets.zero,
-        minSize: 0,
+        minimumSize: Size.zero,
         onPressed: onTap,
         child: ColoredBox(
           color: CupertinoColors.systemBackground.resolveFrom(context),
@@ -76,7 +76,7 @@ class _Thumbnail extends StatelessWidget {
             : Image.file(
                 File(thumb),
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const ColoredBox(
+                errorBuilder: (context, error, stackTrace) => const ColoredBox(
                   color: CupertinoColors.systemGrey5,
                   child: Center(child: Icon(CupertinoIcons.music_note, color: CupertinoColors.systemGrey2, size: 22)),
                 ),

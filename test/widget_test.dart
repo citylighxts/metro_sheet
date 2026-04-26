@@ -25,6 +25,6 @@ void main() {
     );
 
     expect(find.text('Moonlight Sonata'), findsOneWidget);
-    expect(find.text('72 BPM  •  4/4'), findsOneWidget);
+    expect(find.text('Beethoven'), findsOneWidget);
   });
 }

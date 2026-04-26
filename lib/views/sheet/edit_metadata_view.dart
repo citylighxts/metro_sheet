@@ -74,10 +74,12 @@ class _EditMetadataScreenState extends ConsumerState<EditMetadataScreen> {
         if (!mounted) return;
         Navigator.of(context).pop(true);
       } else {
+        if (!mounted) return;
         await _showErrorDialog('Failed to save data to SQLite.');
       }
     } catch (e) {
-      if (mounted) await _showErrorDialog('Error: $e');
+      if (!mounted) return;
+      await _showErrorDialog('Error: $e');
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -144,24 +146,25 @@ class _EditMetadataScreenState extends ConsumerState<EditMetadataScreen> {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, _) async {
+      onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
+        final nav = Navigator.of(context);
         final canExit = await _confirmDiscardChanges();
-        if (mounted && canExit) Navigator.of(context).pop(false);
+        if (mounted && canExit) nav.pop(false);
       },
       child: CupertinoPageScaffold(
         backgroundColor: CupertinoColors.systemGroupedBackground,
         navigationBar: CupertinoNavigationBar(
           leading: CupertinoButton(
             padding: EdgeInsets.zero,
-            minSize: 0,
+            minimumSize: Size.zero,
             onPressed: _isSaving ? null : _handleCancel,
             child: const Text('Cancel'),
           ),
           middle: Text(_isEditing ? 'Edit Sheet Music' : 'New Sheet Music'),
           trailing: CupertinoButton(
             padding: EdgeInsets.zero,
-            minSize: 0,
+            minimumSize: Size.zero,
             onPressed: _isSaving ? null : _save,
             child: _isSaving
                 ? const CupertinoActivityIndicator()
@@ -209,7 +212,7 @@ class _ImagePreview extends StatelessWidget {
           height: 220,
           fit: BoxFit.cover,
           cacheWidth: 800,
-          errorBuilder: (_, __, ___) => DecoratedBox(
+          errorBuilder: (context, error, stackTrace) => DecoratedBox(
             decoration: BoxDecoration(
               color: CupertinoColors.systemGrey6.resolveFrom(context),
               borderRadius: BorderRadius.circular(14),
