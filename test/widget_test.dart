@@ -12,7 +12,6 @@ void main() {
       id: 1,
       title: 'Moonlight Sonata',
       composer: 'Beethoven',
-      bpm: 72,
       imagePath: '/tmp/non-existing-file.jpg',
       createdAt: DateTime(2026, 1, 1),
     );
