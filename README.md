@@ -7,3 +7,6 @@ Screenshot Firebase Firestore:
 
 Screenshot Firebase Auth:
 <img width="1512" height="982" alt="Screenshot 2026-04-26 at 20 18 24" src="https://github.com/user-attachments/assets/6ca3a755-be66-4f39-aa4e-85d0190921ef" />
+
+Screenshot SQLite:
+<img width="1512" height="428" alt="Screenshot 2026-04-26 at 21 30 15" src="https://github.com/user-attachments/assets/bb91cdc9-65c2-4eca-8076-9037d05fe7ff" />
