@@ -43,7 +43,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final tabBg = CupertinoColors.systemBackground.resolveFrom(context).withValues(alpha: 0.92);
+    final tabBg = CupertinoColors.systemBackground.resolveFrom(context);
     final separator = CupertinoColors.separator.resolveFrom(context);
 
     final tabs = [
@@ -156,20 +156,31 @@ class _HomeViewState extends ConsumerState<HomeView> {
         context: context,
         barrierDismissible: false,
         builder: (_) => const Center(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Color(0xCC1C1C1E),
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CupertinoActivityIndicator(radius: 14, color: CupertinoColors.white),
-                  SizedBox(height: 12),
-                  Text('Saving...', style: TextStyle(color: CupertinoColors.white, fontSize: 14)),
-                ],
+          child: Material(
+            type: MaterialType.transparency,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Color(0xFF1C1C1E),
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CupertinoActivityIndicator(radius: 14, color: CupertinoColors.white),
+                    SizedBox(height: 12),
+                    Text(
+                      'Saving...',
+                      style: TextStyle(
+                        color: CupertinoColors.white,
+                        fontSize: 14,
+                        decoration: TextDecoration.none,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -189,10 +200,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
       if (isSaved) {
         ref.invalidate(sheetMusicCountProvider);
         ref.read(homeViewModelProvider.notifier).loadAllSheetMusic();
-        messenger.showSnackBar(const SnackBar(content: Text('Sheet music berhasil disimpan.')));
       } else {
         await deviceService.deleteImage(savedImagePath);
-        messenger.showSnackBar(const SnackBar(content: Text('Scan dibatalkan, file sementara dihapus.')));
       }
     } catch (e) {
       if (!context.mounted) return;
@@ -501,7 +510,7 @@ class _LogoutButton extends StatelessWidget {
 }
 
 Color _navBarColor(BuildContext context) =>
-    CupertinoColors.systemGroupedBackground.resolveFrom(context).withValues(alpha: 0.94);
+    CupertinoColors.systemGroupedBackground.resolveFrom(context);
 
 class _TabItem extends StatelessWidget {
   const _TabItem({

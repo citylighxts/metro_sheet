@@ -6,8 +6,6 @@ import '../services/auth_service.dart';
 export '../services/auth_service.dart'
     show authServiceProvider, authStateProvider, currentUserUidProvider, currentUserEmailProvider;
 
-final sheetMusicServiceProvider = Provider((ref) => DatabaseService());
-
 class HomeViewModel extends StateNotifier<AsyncValue<List<SheetMusic>>> {
   final DatabaseService _db;
   final String? _uid;
@@ -63,7 +61,7 @@ class HomeViewModel extends StateNotifier<AsyncValue<List<SheetMusic>>> {
 
 final homeViewModelProvider =
     StateNotifierProvider<HomeViewModel, AsyncValue<List<SheetMusic>>>((ref) {
-  final db = ref.watch(sheetMusicServiceProvider);
+  final db = ref.watch(databaseServiceProvider);
   final uid = ref.watch(currentUserUidProvider);
   final notifier = HomeViewModel(db, uid);
   notifier.loadAllSheetMusic();
@@ -71,5 +69,5 @@ final homeViewModelProvider =
 });
 
 final sheetMusicCountProvider = FutureProvider<int>((ref) async {
-  return ref.watch(sheetMusicServiceProvider).getSheetMusicCount();
+  return ref.watch(databaseServiceProvider).getSheetMusicCount();
 });

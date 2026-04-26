@@ -7,7 +7,8 @@ import '../../widgets/auth_shared.dart';
 import '../../services/auth_service.dart';
 
 class LoginView extends ConsumerStatefulWidget {
-  const LoginView({super.key});
+  const LoginView({super.key, required this.onGoToRegister});
+  final VoidCallback onGoToRegister;
 
   @override
   ConsumerState<LoginView> createState() => _LoginViewState();
@@ -35,6 +36,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+      if (mounted) setState(() { _isLoading = false; });
     } catch (e) {
       if (mounted) setState(() { _isLoading = false; _errorMessage = e.toString(); });
     }
@@ -105,7 +107,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       children: [
                         const Text('Belum punya akun? ', style: TextStyle(color: CupertinoColors.secondaryLabel, fontSize: 14)),
                         GestureDetector(
-                          onTap: () => Navigator.of(context).pushReplacementNamed('/register'),
+                          onTap: widget.onGoToRegister,
                           child: Text('Daftar', style: TextStyle(color: primary, fontWeight: FontWeight.w600, fontSize: 14)),
                         ),
                       ],

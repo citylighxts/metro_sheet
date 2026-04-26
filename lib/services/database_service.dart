@@ -11,13 +11,12 @@ final databaseServiceProvider = Provider((ref) {
 
 class DatabaseService {
   static const String _dbName = 'metro_sheet.db';
-  static const int _dbVersion = 2;
+  static const int _dbVersion = 3;
   static const String _tableName = 'sheet_music';
+  static const String _usersCollection = 'users';
+  static const String _sheetsCollection = 'sheets';
   static Database? _database;
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String get _usersCollection => 'users';
-  String get _sheetsCollection => 'sheets';
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -37,6 +36,9 @@ class DatabaseService {
         if (oldVersion < 2) {
           await db.execute('ALTER TABLE $_tableName DROP COLUMN time_signature');
         }
+        if (oldVersion < 3) {
+          await db.execute('ALTER TABLE $_tableName DROP COLUMN bpm');
+        }
       },
     );
   }
@@ -47,7 +49,6 @@ class DatabaseService {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         composer TEXT NOT NULL,
-        bpm INTEGER NOT NULL,
         image_path TEXT NOT NULL,
         created_at TEXT NOT NULL
       )
@@ -63,10 +64,7 @@ class DatabaseService {
   Future<SheetMusic?> getSheetMusicById(int id) async {
     final db = await database;
     final maps = await db.query(_tableName, where: 'id = ?', whereArgs: [id]);
-
-    if (maps.isNotEmpty) {
-      return SheetMusic.fromMap(maps.first);
-    }
+    if (maps.isNotEmpty) return SheetMusic.fromMap(maps.first);
     return null;
   }
 
@@ -93,13 +91,12 @@ class DatabaseService {
             .add({
               'title': sheetMusic.title,
               'composer': sheetMusic.composer,
-              'bpm': sheetMusic.bpm,
               'imagePath': sheetMusic.imagePath,
               'createdAt': sheetMusic.createdAt,
               'syncedAt': FieldValue.serverTimestamp(),
             });
       } catch (e) {
-        print('Warning: Failed to sync to remote db: $e');
+        // Firestore sync failure is non-fatal — local save succeeded
       }
     }
     return id;
@@ -113,13 +110,14 @@ class DatabaseService {
       where: 'id = ?',
       whereArgs: [sheetMusic.id],
     );
+
     return rowsAffected > 0;
   }
 
   Future<bool> deleteSheetMusic(int id, DateTime createdAt, String? uid) async {
     final db = await database;
     final rowsAffected = await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
-    
+
     if (uid != null) {
       try {
         final snapshot = await _firestore
@@ -128,12 +126,11 @@ class DatabaseService {
             .collection(_sheetsCollection)
             .where('createdAt', isEqualTo: createdAt)
             .get();
-
-        for (var doc in snapshot.docs) {
+        for (final doc in snapshot.docs) {
           await doc.reference.delete();
         }
       } catch (e) {
-        print('Warning: Failed to delete from remote db: $e');
+        // Firestore delete failure is non-fatal — local delete succeeded
       }
     }
     return rowsAffected > 0;
@@ -153,9 +150,7 @@ class DatabaseService {
   Future<UserProfile?> getUserProfile(String uid) async {
     try {
       final doc = await _firestore.collection(_usersCollection).doc(uid).get();
-      if (doc.exists) {
-        return UserProfile.fromFirestore(doc);
-      }
+      if (doc.exists) return UserProfile.fromFirestore(doc);
       return null;
     } catch (e) {
       throw 'Error getting user profile: $e';

@@ -4,25 +4,6 @@ import '../services/auth_service.dart';
 export '../services/auth_service.dart'
     show authServiceProvider, authStateProvider, currentUserUidProvider, currentUserEmailProvider;
 
-class LoginNotifier extends StateNotifier<AsyncValue<void>> {
-  final AuthService _authService;
-  LoginNotifier(this._authService) : super(const AsyncValue.data(null));
-
-  Future<void> login({required String email, required String password}) async {
-    state = const AsyncValue.loading();
-    try {
-      await _authService.loginWithEmail(email: email, password: password);
-      state = const AsyncValue.data(null);
-    } catch (err, stack) {
-      state = AsyncValue.error(err, stack);
-    }
-  }
-}
-
-final loginProvider = StateNotifierProvider<LoginNotifier, AsyncValue<void>>((ref) {
-  return LoginNotifier(ref.watch(authServiceProvider));
-});
-
 class RegisterNotifier extends StateNotifier<AsyncValue<void>> {
   final AuthService _authService;
   RegisterNotifier(this._authService) : super(const AsyncValue.data(null));

@@ -108,30 +108,7 @@ class _CardInfo extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 6),
-        Row(
-          children: [
-            _Chip(label: '${sheet.bpm} BPM'),
-          ],
-        ),
       ],
     );
   }
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6.resolveFrom(context),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-          child: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: CupertinoColors.secondaryLabel)),
-        ),
-      );
 }

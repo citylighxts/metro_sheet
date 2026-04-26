@@ -38,13 +38,7 @@ class AuthService {
       );
       return userCredential.user?.uid ?? '';
     } on FirebaseAuthException catch (e) {
-      print(
-        'FirebaseAuth register error: code=${e.code}, message=${e.message}',
-      );
       throw _handleAuthException(e);
-    } catch (e) {
-      print('Unexpected register error: $e');
-      rethrow;
     }
   }
 
@@ -59,49 +53,13 @@ class AuthService {
       );
       return userCredential.user?.uid ?? '';
     } on FirebaseAuthException catch (e) {
-      print('FirebaseAuth login error: code=${e.code}, message=${e.message}');
       throw _handleAuthException(e);
-    } catch (e) {
-      print('Unexpected login error: $e');
-      rethrow;
     }
   }
 
   Future<void> signOut() async {
     try {
       await _firebaseAuth.signOut();
-    } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
-    }
-  }
-
-  Future<void> deleteUser() async {
-    try {
-      await _firebaseAuth.currentUser?.delete();
-    } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
-    }
-  }
-
-  Future<void> updateEmail(String newEmail) async {
-    try {
-      await _firebaseAuth.currentUser?.verifyBeforeUpdateEmail(newEmail);
-    } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
-    }
-  }
-
-  Future<void> updatePassword(String newPassword) async {
-    try {
-      await _firebaseAuth.currentUser?.updatePassword(newPassword);
-    } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
-    }
-  }
-
-  Future<void> sendPasswordResetEmail(String email) async {
-    try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }

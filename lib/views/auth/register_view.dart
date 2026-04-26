@@ -7,7 +7,8 @@ import '../../widgets/auth_shared.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 
 class RegisterView extends ConsumerStatefulWidget {
-  const RegisterView({super.key});
+  const RegisterView({super.key, required this.onGoToLogin});
+  final VoidCallback onGoToLogin;
 
   @override
   ConsumerState<RegisterView> createState() => _RegisterViewState();
@@ -34,7 +35,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
       password: _passwordController.text,
     );
     if (!mounted || !success) return;
-    Navigator.of(context).pushReplacementNamed('/login');
+    widget.onGoToLogin();
   }
 
   String? _validateEmail(String? v) {
@@ -118,7 +119,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
                       children: [
                         const Text('Sudah punya akun? ', style: TextStyle(color: CupertinoColors.secondaryLabel, fontSize: 14)),
                         GestureDetector(
-                          onTap: () => Navigator.of(context).pushReplacementNamed('/login'),
+                          onTap: widget.onGoToLogin,
                           child: Text('Sign In', style: TextStyle(color: primary, fontWeight: FontWeight.w600, fontSize: 14)),
                         ),
                       ],

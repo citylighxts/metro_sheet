@@ -24,24 +24,16 @@ class _SheetViewerScreenState extends ConsumerState<SheetViewerScreen> {
   double _speedMultiplier = 20.0;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(sheetViewerViewModelProvider.notifier).setBpm(widget.sheet.bpm);
-    });
-  }
-
-  @override
   void dispose() {
     _scrollTimer?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
 
-  void _startTimer(int bpm) {
+  void _startTimer() {
     _scrollTimer?.cancel();
     const dt = Duration(milliseconds: 16);
-    final pixelsPerFrame = (bpm / 60.0) * _speedMultiplier * (dt.inMilliseconds / 1000.0);
+    final pixelsPerFrame = _speedMultiplier * (dt.inMilliseconds / 1000.0);
 
     _scrollTimer = Timer.periodic(dt, (_) {
       if (!_scrollController.hasClients) return;
@@ -73,7 +65,7 @@ class _SheetViewerScreenState extends ConsumerState<SheetViewerScreen> {
 
     ref.listen<SheetViewerState>(sheetViewerViewModelProvider, (prev, next) {
       if (next.isPlaying && next.autoscrollEnabled) {
-        _startTimer(next.bpm);
+        _startTimer();
       } else {
         _stopTimer();
       }
@@ -83,7 +75,7 @@ class _SheetViewerScreenState extends ConsumerState<SheetViewerScreen> {
       backgroundColor: const Color(0xFF111318),
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.sheet.title, style: const TextStyle(color: CupertinoColors.white)),
-        backgroundColor: const Color(0xFF111318).withValues(alpha: 0.92),
+        backgroundColor: const Color(0xFF111318),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           minSize: 0,
@@ -122,10 +114,8 @@ class _SheetViewerScreenState extends ConsumerState<SheetViewerScreen> {
                 speedMultiplier: _speedMultiplier,
                 onSpeedChanged: (val) {
                   setState(() => _speedMultiplier = val);
-                  if (vm.isPlaying) _startTimer(vm.bpm);
+                  if (vm.isPlaying) _startTimer();
                 },
-                onDecrement: () => ref.read(sheetViewerViewModelProvider.notifier).decrementBpm(),
-                onIncrement: () => ref.read(sheetViewerViewModelProvider.notifier).incrementBpm(),
                 onTogglePlay: () => ref.read(sheetViewerViewModelProvider.notifier).togglePlay(),
               ),
             ),
@@ -141,16 +131,12 @@ class _ControlPanel extends StatelessWidget {
     required this.vm,
     required this.speedMultiplier,
     required this.onSpeedChanged,
-    required this.onDecrement,
-    required this.onIncrement,
     required this.onTogglePlay,
   });
 
   final SheetViewerState vm;
   final double speedMultiplier;
   final ValueChanged<double> onSpeedChanged;
-  final VoidCallback onDecrement;
-  final VoidCallback onIncrement;
   final VoidCallback onTogglePlay;
 
   @override
@@ -159,9 +145,9 @@ class _ControlPanel extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E2028).withValues(alpha: 0.96),
+        color: const Color(0xFF1E2028),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: CupertinoColors.systemGrey.withValues(alpha: 0.2)),
+        border: Border.all(color: const Color(0x33888888)),
         boxShadow: const [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.4), blurRadius: 24, offset: Offset(0, 8))],
       ),
       child: Padding(
@@ -169,47 +155,24 @@ class _ControlPanel extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Speed  ${speedMultiplier.toInt()}',
-                          style: const TextStyle(color: CupertinoColors.white, fontSize: 12, fontWeight: FontWeight.w500)),
-                      const SizedBox(height: 2),
-                      CupertinoSlider(value: speedMultiplier, min: 5.0, max: 100.0, onChanged: onSpeedChanged),
-                    ],
+                Text(
+                  'Speed  ${speedMultiplier.toInt()}',
+                  style: const TextStyle(
+                    color: CupertinoColors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.none,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Row(
-                  children: [
-                    CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      minSize: 36,
-                      onPressed: onDecrement,
-                      child: const Icon(CupertinoIcons.minus_circle, color: CupertinoColors.white, size: 26),
-                    ),
-                    SizedBox(
-                      width: 56,
-                      child: Column(
-                        children: [
-                          Text('${vm.bpm}',
-                              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700, color: CupertinoColors.white),
-                              textAlign: TextAlign.center),
-                          const Text('BPM',
-                              style: TextStyle(color: CupertinoColors.white, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
-                        ],
-                      ),
-                    ),
-                    CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      minSize: 36,
-                      onPressed: onIncrement,
-                      child: const Icon(CupertinoIcons.add_circled, color: CupertinoColors.white, size: 26),
-                    ),
-                  ],
+                const SizedBox(height: 2),
+                CupertinoSlider(
+                  value: speedMultiplier,
+                  min: 5.0,
+                  max: 100.0,
+                  onChanged: onSpeedChanged,
                 ),
               ],
             ),
@@ -224,13 +187,21 @@ class _ControlPanel extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(vm.isPlaying ? CupertinoIcons.pause_fill : CupertinoIcons.play_fill,
-                        color: CupertinoColors.white, size: 16),
+                    Icon(
+                      vm.isPlaying ? CupertinoIcons.pause_fill : CupertinoIcons.play_fill,
+                      color: CupertinoColors.white,
+                      size: 16,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       vm.isPlaying ? 'PAUSE AUTO-SCROLL' : 'START AUTO-SCROLL',
                       style: const TextStyle(
-                          color: CupertinoColors.white, fontWeight: FontWeight.w700, fontSize: 14, letterSpacing: 0.3),
+                        color: CupertinoColors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        letterSpacing: 0.3,
+                        decoration: TextDecoration.none,
+                      ),
                     ),
                   ],
                 ),

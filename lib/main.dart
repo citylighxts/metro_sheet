@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'views/auth/auth_wrapper.dart';
-import 'views/auth/login_view.dart';
-import 'views/auth/register_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,9 +33,7 @@ class MetroSheetApp extends StatelessWidget {
         cupertinoOverrideTheme: CupertinoThemeData(
           primaryColor: colorScheme.primary,
           scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
-          barBackgroundColor: CupertinoColors.systemBackground.withValues(
-            alpha: 0.96,
-          ),
+          barBackgroundColor: CupertinoColors.systemBackground,
         ),
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
@@ -48,14 +44,6 @@ class MetroSheetApp extends StatelessWidget {
         ),
       ),
       home: const AuthWrapper(),
-      onGenerateRoute: (settings) {
-        if (settings.name == '/login') {
-          return MaterialPageRoute(builder: (_) => const LoginView());
-        } else if (settings.name == '/register') {
-          return MaterialPageRoute(builder: (_) => const RegisterView());
-        }
-        return null;
-      },
     );
   }
 }

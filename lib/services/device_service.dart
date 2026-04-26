@@ -26,8 +26,8 @@ class DeviceService {
   Future<bool> ensureCameraPermission() async {
     if (!Platform.isIOS) return true;
     final status = await Permission.camera.status;
-    if (status.isGranted) return true;
-    return (await Permission.camera.request()).isGranted;
+    if (status.isPermanentlyDenied) return false;
+    return true;
   }
 
   Future<bool> requestNotificationPermission() async {
