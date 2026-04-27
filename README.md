@@ -13,7 +13,7 @@ Screenshot Firebase Firestore:
 Screenshot Firebase Auth:
 <img width="1512" height="749" alt="Screenshot 2026-04-26 at 21 48 19" src="https://github.com/user-attachments/assets/ee2127cc-d452-46a9-b79f-7e721788a594" />
 
-Screenshot SQLite:
+Screenshot SQLite Relational DB:
 <img width="1512" height="428" alt="Screenshot 2026-04-26 at 21 30 15" src="https://github.com/user-attachments/assets/bb91cdc9-65c2-4eca-8076-9037d05fe7ff" />
 
 Widget Tree Diagram:
