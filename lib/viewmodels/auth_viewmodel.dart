@@ -16,7 +16,6 @@ class RegisterNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final uid = await _authService.registerWithEmail(email: email, password: password);
-      // Sign out immediately before Firebase auth stream emits the new user
       await _authService.signOut();
       await _db.insertLocalUser(UserProfile(
         uid: uid,
@@ -44,7 +43,6 @@ final signOutProvider = Provider((ref) {
   return () async => auth.signOut();
 });
 
-// Ensures user exists in local SQLite on every login
 final ensureLocalUserProvider = Provider((ref) {
   final db = ref.read(databaseServiceProvider);
   return (String uid, String email) async {

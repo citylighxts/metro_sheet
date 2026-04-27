@@ -44,7 +44,6 @@ class DatabaseService {
           await db.execute('ALTER TABLE $_sheetsTable DROP COLUMN bpm');
         }
         if (oldVersion < 4) {
-          // Create users table
           await db.execute('''
             CREATE TABLE IF NOT EXISTS $_usersTable (
               uid TEXT PRIMARY KEY,
@@ -53,7 +52,6 @@ class DatabaseService {
               created_at TEXT NOT NULL
             )
           ''');
-          // Add user_id foreign key column to sheet_music
           await db.execute(
             'ALTER TABLE $_sheetsTable ADD COLUMN user_id TEXT REFERENCES $_usersTable(uid)',
           );
@@ -83,8 +81,6 @@ class DatabaseService {
     ''');
   }
 
-  // ── Users ──────────────────────────────────────────────────────────────────
-
   Future<void> insertLocalUser(UserProfile user) async {
     final db = await database;
     await db.insert(
@@ -100,8 +96,6 @@ class DatabaseService {
     if (maps.isNotEmpty) return UserProfile.fromSqliteMap(maps.first);
     return null;
   }
-
-  // ── Sheet Music ────────────────────────────────────────────────────────────
 
   Future<List<SheetMusic>> getAllSheetMusic() async {
     final db = await database;
@@ -125,7 +119,6 @@ class DatabaseService {
   Future<int?> addSheetMusic(SheetMusic sheetMusic, String? uid, String? email) async {
     final db = await database;
 
-    // Ensure user exists before inserting sheet (guards against race condition)
     if (uid != null) {
       final existing = await db.query(_usersTable, where: 'uid = ?', whereArgs: [uid]);
       if (existing.isEmpty) {
@@ -160,7 +153,6 @@ class DatabaseService {
               'syncedAt': FieldValue.serverTimestamp(),
             });
       } catch (_) {
-        // Firestore sync failure is non-fatal — local save succeeded
       }
     }
     return id;
@@ -193,13 +185,10 @@ class DatabaseService {
           await doc.reference.delete();
         }
       } catch (_) {
-        // Firestore delete failure is non-fatal — local delete succeeded
       }
     }
     return rowsAffected > 0;
   }
-
-  // ── Firestore User Profile ─────────────────────────────────────────────────
 
   Future<void> upsertUserProfile(UserProfile userProfile) async {
     try {
