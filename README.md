@@ -21,9 +21,9 @@ Widget Tree Diagram:
 
 ## Penjelasan Kode
 
-MetroSheet adalah aplikasi Flutter untuk scan, nyimpen, dan baca not musik. Alurnya simpel yaitu kita scan lembaran not pakai kamera, simpan ke HP, lalu bisa dibuka lagi kapan aja.
+MetroSheet adalah aplikasi Flutter untuk scan, simpan, dan baca not musik. Alurnya simpel yaitu: scan lembaran not pakai kamera, simpan ke HP, lalu bisa dibuka lagi kapan saja.
 
-App ini pakai dua database. SQLite dipakai untuk penyimpanan lokal di device supaya tetap bisa dipakai offline. Firestore dipakai buat backup dan sinkronisasi ke cloud. Untuk login, pakai Firebase Auth.
+App ini menggunakan dua database. SQLite dipakai untuk penyimpanan lokal di device supaya tetap bisa dipakai offline. Firestore dipakai buat backup dan sinkronisasi ke cloud. Untuk login, pakai Firebase Auth.
 
 ---
 
