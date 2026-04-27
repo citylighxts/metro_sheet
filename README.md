@@ -1,7 +1,10 @@
 # MetroSheet
 
-Please FA Video Demo Aplikasi:
+Please FA Video
+Demo Aplikasi:
 [Demo Aplikasi](https://drive.google.com/file/d/1HmgQLZeHilucQG2uQiyBsMNhNuNMtQ37/view?usp=share_link)
+dan Penjelasan Kode:
+[Penjelasan Kode](https://drive.google.com/file/d/1Fk1S0Y810a9bNgBb8IOeNHxU8bV7olC0/view?usp=share_link)
 
 Screenshot Firebase Firestore:
 <img width="1511" height="752" alt="Screenshot 2026-04-26 at 21 47 37" src="https://github.com/user-attachments/assets/0d12361d-8276-4859-bd2b-d0399e98cc32" />
